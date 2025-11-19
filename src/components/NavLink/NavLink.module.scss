@@ -74,6 +74,9 @@
   .premiumIcon {
     @include iconNav(url(../../assets/icons/nav/premium.svg), var(--text-secondary));
   }
+  .walletIcon {
+    @include iconNav(url(../../assets/icons/nav/wallet.svg), var(--text-primary));
+  }
   .settingsIcon {
     @include iconNav(url(../../assets/icons/nav/settings.svg), var(--text-secondary));
   }
@@ -109,6 +112,9 @@
     }
     .premiumIcon {
       @include iconNav(url(../../assets/icons/nav/premium.svg), var(--text-primary));
+    }
+    .walletIcon {
+      @include iconNav(url(../../assets/icons/nav/wallet.svg), var(--text-primary));
     }
     .settingsIcon {
       @include iconNav(url(../../assets/icons/nav/settings_selected.svg), var(--text-primary));

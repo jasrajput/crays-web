@@ -15,6 +15,7 @@ import { useDMContext } from './contexts/DMContext';
 import { generateNsec, nip19 } from './lib/nTools';
 import Blossom from './pages/Settings/Blossom';
 import CryptoRedirect from './components/CryptoRedirect';
+import { useWalletContext } from './contexts/WalletContext';
 
 const Home = lazy(() => import('./pages/Home'));
 const Reads = lazy(() => import('./pages/Reads'));
@@ -59,6 +60,7 @@ const ReadsEditor = lazy(() => import('./pages/ReadsEditor'));
 const ReadsMy = lazy(() => import('./pages/ReadsMy'));
 const Streaming = lazy(() => import('./pages/StreamPage'));
 const CitadelPage = lazy(() => import(`./pages/CitadelPage`));
+const walletPage = lazy(() => import(`./pages/Wallet`));
 
 const primalWindow = window as PrimalWindow;
 const isDev = localStorage.getItem('devMode') === 'true';
@@ -82,6 +84,7 @@ const AppRouter: Component = () => {
   const messages = useDMContext();
   const media = useMediaContext();
   const notifications = useNotificationsContext();
+  const wallet = useWalletContext();
   const search = useSearchContext();
 
   const genNsec = () => generateNsec();
@@ -94,6 +97,7 @@ const AppRouter: Component = () => {
       media,
       messages,
       notifications,
+      wallet,
       profile,
       search,
       settings,
@@ -135,6 +139,7 @@ const AppRouter: Component = () => {
           <Route path="/notifications" component={Notifications} />
           <Route path="/downloads" component={Downloads} />
           <Route path="/download" component={() => <Navigate href='/downloads' />} />;
+          <Route path="/wallet" component={walletPage} />;
           <Route path="/settings" component={Settings}>
             <Route path="/" component={Menu} />
             <Route path="/account" component={Account} />

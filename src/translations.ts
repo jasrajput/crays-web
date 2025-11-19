@@ -705,6 +705,26 @@ export const downloads = {
   },
 };
 
+
+export const wallets = {
+  title: {
+    id: 'downloads.title',
+    defaultMessage: 'Wallet',
+    description: 'Title of the wallet page',
+  },
+ 
+  links: {
+    title: {
+      id: 'downloads.sidebarTitle',
+      defaultMessage: 'Source code',
+      description: 'Daownload sidebar links title',
+    },
+    
+  },
+};
+
+
+
 export const confirmDefaults = {
   title: {
     id: 'confirm.title',
@@ -915,6 +935,11 @@ export const navBar = {
     id: 'navbar.premium',
     defaultMessage: 'Premium',
     description: 'Label for the nav bar item link to Premium page',
+  },
+  wallet: {
+    id: 'navbar.wallet',
+    defaultMessage: 'Wallet',
+    description: 'Wallet related settings',
   },
   settings: {
     id: 'navbar.settings',

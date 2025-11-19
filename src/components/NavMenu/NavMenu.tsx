@@ -65,6 +65,11 @@ const NavMenu: Component< { id?: string } > = (props) => {
       bubble: () => notifications?.downloadsCount || 0,
     }, 
     {
+      to: '/wallet',
+      label: intl.formatMessage(t.wallet),
+      icon: 'walletIcon',
+    },
+    {
       to: '/settings',
       label: intl.formatMessage(t.settings),
       icon: 'settingsIcon',
