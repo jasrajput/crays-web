@@ -1,12 +1,14 @@
 import { Component, createSignal, For } from "solid-js";
 import { useNavigate, useLocation } from "@solidjs/router";
 import styles from "./VerifyPhrase.module.scss";
+import { validateMnemonic } from 'bip39'; // ADD THIS IMPORT
 
 const VerifyPhrase: Component = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
   const seedPhrase = location.state?.seedPhrase || [];
+  const mnemonic = location.state?.mnemonic || ""; // ADD THIS - get full mnemonic string
   
   // Select 4 random words to verify
   const generateVerificationWords = () => {
@@ -46,8 +48,20 @@ const VerifyPhrase: Component = () => {
       setErrors(newErrors);
       setShowError(true);
     } else {
-      // Success! Navigate to wallet or complete setup
-      navigate("/wallet/success");
+      // Validate the full mnemonic using BIP39
+      if (!validateMnemonic(mnemonic)) {
+        setShowError(true);
+        console.error("Invalid BIP39 mnemonic");
+        return;
+      }
+
+      // Success! Navigate to wallet success page
+      navigate("/wallet/success", { 
+        state: { 
+          mnemonic: mnemonic,
+          isImport: false 
+        } 
+      });
     }
   };
 
@@ -80,7 +94,7 @@ const VerifyPhrase: Component = () => {
         {showError() && (
           <div class={styles.errorBanner}>
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="currentColor"/>
+              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="currentColor"/>
             </svg>
             <p>Some words don't match. Please try again.</p>
           </div>
@@ -99,6 +113,8 @@ const VerifyPhrase: Component = () => {
                   placeholder={`Enter word #${index + 1}`}
                   value={userInputs()[index] || ""}
                   onInput={(e) => handleInputChange(index, e.currentTarget.value)}
+                  autocomplete="off"
+                  spellcheck={false}
                 />
                 {errors()[index] && (
                   <span class={styles.errorText}>Incorrect word</span>

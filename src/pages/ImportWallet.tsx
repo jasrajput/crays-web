@@ -1,67 +1,70 @@
-import { Component, createSignal, For } from "solid-js";
+import { Component, createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import styles from "./ImportWallet.module.scss";
+import { validateMnemonic } from 'bip39';
 
 const ImportWallet: Component = () => {
   const navigate = useNavigate();
   
-  const [seedWords, setSeedWords] = createSignal<string[]>(Array(12).fill(""));
+  const [mnemonicInput, setMnemonicInput] = createSignal("");
   const [error, setError] = createSignal("");
   const [isLoading, setIsLoading] = createSignal(false);
 
-  const handleWordChange = (index: number, value: string) => {
-    const newWords = [...seedWords()];
-    newWords[index] = value.trim().toLowerCase();
-    setSeedWords(newWords);
+  const handleInputChange = (value: string) => {
+    setMnemonicInput(value);
     setError("");
   };
 
-  const handlePaste = (e: ClipboardEvent) => {
-    e.preventDefault();
-    const pastedText = e.clipboardData?.getData("text") || "";
-    const words = pastedText.trim().split(/\s+/);
-    
-    if (words.length === 12 || words.length === 24) {
-      const newWords = words.slice(0, 12).map(w => w.toLowerCase());
-      setSeedWords([...newWords, ...Array(Math.max(0, 12 - newWords.length)).fill("")]);
-      setError("");
-    } else {
-      setError("Please paste a valid 12 or 24-word recovery phrase");
-    }
-  };
-
   const validateAndImport = async () => {
-    const words = seedWords().filter(w => w.length > 0);
+    const mnemonic = mnemonicInput().trim();
     
-    if (words.length !== 12) {
-      setError("Please enter all 12 words");
+    if (!mnemonic) {
+      setError("Please enter your recovery phrase");
       return;
     }
 
-    // TODO: Replace with actual Breez SDK validation
-    const isValid = words.every(word => word.length > 0);
+    // Normalize whitespace and validate word count
+    const words = mnemonic.split(/\s+/);
     
-    if (!isValid) {
+    if (words.length !== 12 && words.length !== 24) {
+      setError("Recovery phrase must be 12 or 24 words");
+      return;
+    }
+
+    // Join with single spaces for validation
+    const normalizedMnemonic = words.join(" ");
+
+    // Validate using BIP39
+    if (!validateMnemonic(normalizedMnemonic)) {
       setError("Invalid recovery phrase. Please check your words and try again.");
       return;
     }
 
     setIsLoading(true);
     
-    // Simulate wallet import (replace with actual Breez SDK import)
-    setTimeout(() => {
+    try {
+      // Navigate to success page with mnemonic
+      navigate("/wallet/success", { 
+        state: { 
+          isImport: true,
+          mnemonic: normalizedMnemonic
+        } 
+      });
+    } catch (err) {
+      console.error("Failed to import wallet:", err);
+      setError("Failed to import wallet. Please try again.");
       setIsLoading(false);
-      navigate("/wallet/success", { state: { isImport: true } });
-    }, 2000);
-  };
-
-  const isFormComplete = () => {
-    return seedWords().filter(w => w.length > 0).length === 12;
+    }
   };
 
   const handleClear = () => {
-    setSeedWords(Array(12).fill(""));
+    setMnemonicInput("");
     setError("");
+  };
+
+  const wordCount = () => {
+    const words = mnemonicInput().trim().split(/\s+/).filter(w => w.length > 0);
+    return words.length;
   };
 
   return (
@@ -83,7 +86,7 @@ const ImportWallet: Component = () => {
           <div class={styles.infoContent}>
             <h3>Restore Your Wallet</h3>
             <p>
-              Enter your 12-word recovery phrase to restore your wallet. 
+              Enter or paste your 12 or 24-word recovery phrase to restore your wallet. 
               Make sure you're in a private place and no one can see your screen.
             </p>
           </div>
@@ -101,45 +104,41 @@ const ImportWallet: Component = () => {
         <div class={styles.phraseSection}>
           <div class={styles.phraseHeader}>
             <h3>Recovery Phrase</h3>
-            <button class={styles.clearButton} onClick={handleClear}>
+            <div class={styles.wordCounter}>
+              <span class={wordCount() === 12 || wordCount() === 24 ? styles.valid : ""}>
+                {wordCount()} words
+              </span>
+            </div>
+          </div>
+
+          <textarea
+            class={styles.mnemonicTextarea}
+            placeholder="Enter your recovery phrase here (12 or 24 words)"
+            value={mnemonicInput()}
+            onInput={(e) => handleInputChange(e.currentTarget.value)}
+            rows={4}
+            autocomplete="off"
+            spellcheck={false}
+          />
+
+          <div class={styles.actionButtons}>
+            <button 
+              class={styles.clearButton} 
+              onClick={handleClear}
+              disabled={!mnemonicInput()}
+            >
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
               </svg>
-              Clear All
+              Clear
             </button>
-          </div>
-
-          <div class={styles.phraseGrid} onPaste={handlePaste}>
-            <For each={seedWords()}>
-              {(word, index) => (
-                <div class={styles.wordInput}>
-                  <span class={styles.wordNumber}>{index() + 1}</span>
-                  <input
-                    type="text"
-                    class={styles.input}
-                    placeholder={`Word ${index() + 1}`}
-                    value={word}
-                    onInput={(e) => handleWordChange(index(), e.currentTarget.value)}
-                    autocomplete="off"
-                    spellcheck={false}
-                  />
-                </div>
-              )}
-            </For>
-          </div>
-
-          <div class={styles.pasteHint}>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor"/>
-            </svg>
-            <p>You can paste all 12 words at once</p>
           </div>
         </div>
 
         <button 
           class={styles.importButton}
           onClick={validateAndImport}
-          disabled={!isFormComplete() || isLoading()}
+          disabled={!mnemonicInput().trim() || isLoading()}
         >
           {isLoading() ? (
             <>

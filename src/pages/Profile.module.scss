@@ -792,3 +792,24 @@
     border: 1px solid red;
   }
 }
+
+
+.profile-social-links {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.profile-social-icon {
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  background: #f4f4f4; border-radius: 50%; transition: box-shadow .18s;
+}
+.profile-social-icon:hover {
+  box-shadow: 0 0 8px #ccc;
+}
+.edit-profile-socials .social-edit-row {
+  margin-bottom: 8px;
+  display: flex; gap: 8px; align-items: center;
+}
+.edit-profile-socials input {
+  padding: 5px 12px; border-radius: 6px; border: 1px solid #ccc;
+}

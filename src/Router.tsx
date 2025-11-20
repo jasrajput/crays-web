@@ -15,7 +15,7 @@ import { useDMContext } from "./contexts/DMContext";
 import { generateNsec, nip19 } from "./lib/nTools";
 import Blossom from "./pages/Settings/Blossom";
 import CryptoRedirect from "./components/CryptoRedirect";
-import { useWalletContext } from "./contexts/WalletContext";
+import { useWallet } from './contexts/WalletContext';
 
 const Home = lazy(() => import("./pages/Home"));
 const Reads = lazy(() => import("./pages/Reads"));
@@ -33,6 +33,7 @@ const Help = lazy(() => import("./pages/Help"));
 const Search = lazy(() => import("./pages/Search"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
+const ProfileLinksPage = lazy(() => import("./pages/ProfileLinksPage"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Mutelist = lazy(() => import("./pages/Mutelist"));
 const CreateAccount = lazy(() => import("./pages/CreateAccount"));
@@ -69,6 +70,8 @@ const CreateWallet = lazy(() => import(`./pages/CreateWallet`));
 const VerifyPhrase = lazy(() => import(`./pages/VerifyPhrase`));
 const ImportWallet = lazy(() => import(`./pages/ImportWallet`));
 const WalletSuccess = lazy(() => import(`./pages/WalletSuccess`));
+const WalletDashboard = lazy(() => import(`./pages/WalletDashboard`));
+
 
 const primalWindow = window as PrimalWindow;
 const isDev = localStorage.getItem("devMode") === "true";
@@ -92,7 +95,7 @@ const AppRouter: Component = () => {
   const messages = useDMContext();
   const media = useMediaContext();
   const notifications = useNotificationsContext();
-  const wallet = useWalletContext();
+  const wallet = useWallet();
   const search = useSearchContext();
 
   const genNsec = () => generateNsec();
@@ -156,6 +159,7 @@ const AppRouter: Component = () => {
           <Route path="/verify" component={VerifyPhrase} />
           <Route path="/import" component={ImportWallet} />
           <Route path="/success" component={WalletSuccess} />
+          <Route path="/dashboard" component={WalletDashboard} />
         </Route>
         <Route path="/settings" component={Settings}>
           <Route path="/" component={Menu} />
@@ -172,6 +176,7 @@ const AppRouter: Component = () => {
         </Route>
         <Route path="/bookmarks" component={Bookmarks} />
         <Route path="/settings/profile" component={EditProfile} />
+        <Route path="/settings/links" component={ProfileLinksPage} />
         <Route path="/profile/:npub?" component={Profile} />
         <Route path="/p/:npub?">
           <Route path="/" component={Profile} />

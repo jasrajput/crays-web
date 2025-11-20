@@ -1,43 +1,50 @@
-import { Component, createEffect, createSignal, on, onCleanup, onMount, Show } from 'solid-js';
+import {
+  Component,
+  createEffect,
+  createSignal,
+  on,
+  onCleanup,
+  onMount,
+  Show,
+} from "solid-js";
 
-import styles from './Layout.module.scss';
+import styles from "./Layout.module.scss";
 
-import { useBeforeLeave, useLocation, useParams} from '@solidjs/router';
-import { useAccountContext } from '../../contexts/AccountContext';
-import zapMD from '../../assets/lottie/zap_md.json';
-import { useHomeContext } from '../../contexts/HomeContext';
-import { SendNoteResult } from '../../types/primal';
-import { useProfileContext } from '../../contexts/ProfileContext';
-import ZapAnimation from '../ZapAnimation/ZapAnimation';
-import ReactionsModal from '../ReactionsModal/ReactionsModal';
-import { useAppContext } from '../../contexts/AppContext';
-import CustomZap from '../CustomZap/CustomZap';
-import NoteContextMenu from '../Note/NoteContextMenu';
-import LnQrCodeModal from '../LnQrCodeModal/LnQrCodeModal';
-import ConfirmModal from '../ConfirmModal/ConfirmModal';
-import CashuQrCodeModal from '../CashuQrCodeModal/CashuQrCodeModal';
-import SubscribeToAuthorModal from '../SubscribeToAuthorModal/SubscribeToAuthorModal';
-import { useSettingsContext } from '../../contexts/SettingsContext';
-import EnterPinModal from '../EnterPinModal/EnterPinModal';
-import CreateAccountModal from '../CreateAccountModal/CreateAccountModal';
-import LoginModal from '../LoginModal/LoginModal';
-import { unwrap } from 'solid-js/store';
-import { followWarning, forgotPin } from '../../translations';
-import { useIntl } from '@cookbook/solid-intl';
-import LayoutPhone from './LayoutPhone';
-import LayoutDesktop from './LayoutDesktop';
-import { isPhone } from '../../utils';
-import ArticleOverviewContextMenu from '../Note/ArticleOverviewContextMenu';
-import ArticleDraftContextMenu from '../Note/ArticleDraftContextMenu';
-import LiveStreamContextMenu from '../Note/LiveStreamContextMenu';
-import ProfileQrCodeModal from '../ProfileQrCodeModal/ProfileQrCodeModal';
-import ReportContentModal from '../ReportContentModal/ReportContentModal';
-import NoteVideoContextMenu from '../Note/NoteVideoContextMenu';
+import { useBeforeLeave, useLocation, useParams } from "@solidjs/router";
+import { useAccountContext } from "../../contexts/AccountContext";
+import zapMD from "../../assets/lottie/zap_md.json";
+import { useHomeContext } from "../../contexts/HomeContext";
+import { SendNoteResult } from "../../types/primal";
+import { useProfileContext } from "../../contexts/ProfileContext";
+import ZapAnimation from "../ZapAnimation/ZapAnimation";
+import ReactionsModal from "../ReactionsModal/ReactionsModal";
+import { useAppContext } from "../../contexts/AppContext";
+import CustomZap from "../CustomZap/CustomZap";
+import NoteContextMenu from "../Note/NoteContextMenu";
+import LnQrCodeModal from "../LnQrCodeModal/LnQrCodeModal";
+import ConfirmModal from "../ConfirmModal/ConfirmModal";
+import CashuQrCodeModal from "../CashuQrCodeModal/CashuQrCodeModal";
+import SubscribeToAuthorModal from "../SubscribeToAuthorModal/SubscribeToAuthorModal";
+import { useSettingsContext } from "../../contexts/SettingsContext";
+import EnterPinModal from "../EnterPinModal/EnterPinModal";
+import CreateAccountModal from "../CreateAccountModal/CreateAccountModal";
+import LoginModal from "../LoginModal/LoginModal";
+import { unwrap } from "solid-js/store";
+import { followWarning, forgotPin } from "../../translations";
+import { useIntl } from "@cookbook/solid-intl";
+import LayoutPhone from "./LayoutPhone";
+import LayoutDesktop from "./LayoutDesktop";
+import { isPhone } from "../../utils";
+import ArticleOverviewContextMenu from "../Note/ArticleOverviewContextMenu";
+import ArticleDraftContextMenu from "../Note/ArticleDraftContextMenu";
+import LiveStreamContextMenu from "../Note/LiveStreamContextMenu";
+import ProfileQrCodeModal from "../ProfileQrCodeModal/ProfileQrCodeModal";
+import ReportContentModal from "../ReportContentModal/ReportContentModal";
+import NoteVideoContextMenu from "../Note/NoteVideoContextMenu";
 
 export const [isHome, setIsHome] = createSignal(false);
 
 const Layout: Component<any> = (props) => {
-
   const account = useAccountContext();
   const home = useHomeContext();
   const profile = useProfileContext();
@@ -47,17 +54,24 @@ const Layout: Component<any> = (props) => {
   const settings = useSettingsContext();
   const intl = useIntl();
 
-  createEffect(on(() => location.pathname, (path, prev) => {
-    if (path !== prev) {
-      app?.actions.closeContextMenu();
-      app?.actions.closeArticleOverviewContextMenu();
-      app?.actions.closeArticleDraftContextMenu();
-    }
-  }));
+  createEffect(
+    on(
+      () => location.pathname,
+      (path, prev) => {
+        if (path !== prev) {
+          app?.actions.closeContextMenu();
+          app?.actions.closeArticleOverviewContextMenu();
+          app?.actions.closeArticleDraftContextMenu();
+        }
+      }
+    )
+  );
 
   createEffect(() => {
-    const newNote = document.getElementById('new_note_input');
-    const newNoteTextArea = document.getElementById('new_note_text_area') as HTMLTextAreaElement;
+    const newNote = document.getElementById("new_note_input");
+    const newNoteTextArea = document.getElementById(
+      "new_note_text_area"
+    ) as HTMLTextAreaElement;
 
     if (account?.showNewNoteForm) {
       if (!newNote || !newNoteTextArea) {
@@ -65,32 +79,31 @@ const Layout: Component<any> = (props) => {
       }
       newNote?.classList.add(styles.animatedShow);
       newNoteTextArea?.focus();
-    }
-    else {
+    } else {
       if (!newNote || !newNoteTextArea) {
         return;
       }
       newNote?.classList.remove(styles.animatedShow);
-      newNoteTextArea.value = '';
+      newNoteTextArea.value = "";
     }
   });
 
   const onNewNotePosted = (result: SendNoteResult) => {
-    const path = location.pathname.split('/');
+    const path = location.pathname.split("/");
 
-    if (path[1] === 'home' && home) {
+    if (path[1] === "home" && home) {
       // check for new notes on the home feed
-      home.actions.checkForNewNotes(home.selectedFeed?.spec || '')
+      home.actions.checkForNewNotes(home.selectedFeed?.spec || "");
       return;
     }
 
-    if (['p', 'profile'].includes(path[1]) && profile) {
+    if (["p", "profile"].includes(path[1]) && profile) {
       const pubkey = params.npub;
       // check for new notes on the profile feed
       profile.actions.checkForNewNotes(pubkey || account?.publicKey);
       return;
     }
-  }
+  };
 
   createEffect(() => {
     if (location.pathname) {
@@ -106,11 +119,13 @@ const Layout: Component<any> = (props) => {
 
   return (
     <Show
-      when={location.pathname !== '/'}
-      fallback={<>
-        <div id="modal" class={styles.modal}></div>
-        {props.children}
-      </>}
+      when={location.pathname !== "/"}
+      fallback={
+        <>
+          <div id="modal" class={styles.modal}></div>
+          {props.children}
+        </>
+      }
     >
       <>
         <div class={styles.preload}>
@@ -138,7 +153,6 @@ const Layout: Component<any> = (props) => {
           </LayoutPhone>
         </Show>
 
-
         <ReactionsModal
           noteId={app?.showReactionsModal}
           stats={app?.reactionStats}
@@ -160,14 +174,14 @@ const Layout: Component<any> = (props) => {
 
         <LnQrCodeModal
           open={app?.showLnInvoiceModal}
-          lnbc={app?.lnbc?.invoice || ''}
+          lnbc={app?.lnbc?.invoice || ""}
           onPay={app?.lnbc?.onPay}
           onClose={app?.lnbc?.onCancel}
         />
 
         <CashuQrCodeModal
           open={app?.showCashuInvoiceModal}
-          cashu={app?.cashu?.invoice || ''}
+          cashu={app?.cashu?.invoice || ""}
           onPay={app?.cashu?.onPay}
           onClose={app?.cashu?.onCancel}
         />
@@ -190,29 +204,29 @@ const Layout: Component<any> = (props) => {
         />
 
         <EnterPinModal
-          open={(account?.showPin || '').length > 0}
+          open={(account?.showPin || "").length > 0}
           valueToDecrypt={account?.showPin}
           onSuccess={(sec: string) => {
             account?.actions.setSec(sec, true);
-            account?.actions.setString('showPin', '');
+            account?.actions.setString("showPin", "");
           }}
-          onAbort={() => account?.actions.setString('showPin', '')}
+          onAbort={() => account?.actions.setString("showPin", "")}
           onForgot={() => {
-            account?.actions.setString('showPin', '');
-            account?.actions.setFlag('showForgot', true);
+            account?.actions.setString("showPin", "");
+            account?.actions.setFlag("showForgot", true);
           }}
         />
         <CreateAccountModal
           open={account?.showGettingStarted}
-          onAbort={() => account?.actions.setFlag('showGettingStarted', false)}
+          onAbort={() => account?.actions.setFlag("showGettingStarted", false)}
           onLogin={() => {
-            account?.actions.setFlag('showGettingStarted', false);
-            account?.actions.setFlag('showLogin', true);
+            account?.actions.setFlag("showGettingStarted", false);
+            account?.actions.setFlag("showLogin", true);
           }}
         />
         <LoginModal
           open={account?.showLogin}
-          onAbort={() => account?.actions.setFlag('showLogin', false)}
+          onAbort={() => account?.actions.setFlag("showLogin", false)}
         />
         <ConfirmModal
           open={account?.followData.openDialog}
@@ -222,13 +236,19 @@ const Layout: Component<any> = (props) => {
           abortLabel={intl.formatMessage(followWarning.abort)}
           onConfirm={async () => {
             if (account?.publicKey) {
-              const data = unwrap(account?.followData)
-              await account.actions.resolveContacts(account?.publicKey, data.following, data.date, data.tags, data.relayInfo);
+              const data = unwrap(account?.followData);
+              await account.actions.resolveContacts(
+                account?.publicKey,
+                data.following,
+                data.date,
+                data.tags,
+                data.relayInfo
+              );
             }
             account?.actions.setFollowData({
               tags: [],
               date: 0,
-              relayInfo: '',
+              relayInfo: "",
               openDialog: false,
               following: [],
             });
@@ -237,7 +257,7 @@ const Layout: Component<any> = (props) => {
             account?.actions.setFollowData({
               tags: [],
               date: 0,
-              relayInfo: '',
+              relayInfo: "",
               openDialog: false,
               following: [],
             });
@@ -251,10 +271,10 @@ const Layout: Component<any> = (props) => {
           abortLabel={intl.formatMessage(forgotPin.abort)}
           onConfirm={async () => {
             account?.actions.logout();
-            account?.actions.setFlag('showForgot', false);
+            account?.actions.setFlag("showForgot", false);
           }}
           onAbort={() => {
-            account?.actions.setFlag('showForgot', false);
+            account?.actions.setFlag("showForgot", false);
           }}
         />
 
@@ -300,7 +320,7 @@ const Layout: Component<any> = (props) => {
         />
       </>
     </Show>
-  )
-}
+  );
+};
 
 export default Layout;
