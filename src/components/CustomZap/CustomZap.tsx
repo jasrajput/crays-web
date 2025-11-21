@@ -19,6 +19,8 @@ import { useToastContext } from '../Toaster/Toaster';
 import styles from './CustomZap.module.scss';
 import { readSecFromStorage } from '../../lib/localStore';
 import { StreamingData } from '../../lib/streaming';
+import { useWallet } from "../../contexts/WalletContext";
+
 
 const CustomZap: Component<{
   id?: string,
@@ -38,6 +40,7 @@ const CustomZap: Component<{
   const account = useAccountContext();
   const intl = useIntl();
   const settings = useSettingsContext();
+  const wallet = useWallet();
 
   const [selectedValue, setSelectedValue] = createSignal(settings?.availableZapOptions[0] || defaultZapOptions[0]);
 
@@ -98,6 +101,7 @@ const CustomZap: Component<{
     return intl.formatNumber(amount);
   };
 
+  // With Breez
   const submit = async () => {
     if (!account?.hasPublicKey()) {
       account?.actions.showGetStarted();
@@ -119,11 +123,18 @@ const CustomZap: Component<{
     //   return;
     // }
 
+     // 2. Check wallet connection
+    if (!wallet.connected()) {
+      toast?.sendWarning('Wallet not connected');
+      return;
+    }
+
     props.onConfirm(selectedValue());
 
     const note = props.note;
 
     if (note) {
+      console.log("IN NOTES BBAY");
       setTimeout(async () => {
 
         const zappers: Record<string, Function> = {
@@ -138,7 +149,7 @@ const CustomZap: Component<{
           selectedValue().amount || 0,
           selectedValue().message,
           account.activeRelays,
-          account.activeNWC,
+          wallet,
         );
 
         handleZap(success);
@@ -153,7 +164,7 @@ const CustomZap: Component<{
         selectedValue().amount || 0,
         selectedValue().message,
         account.activeRelays,
-        account.activeNWC,
+        wallet
       );
 
       handleZap(success);
@@ -192,7 +203,7 @@ const CustomZap: Component<{
           selectedValue().amount || 0,
           selectedValue().message,
           account.activeRelays,
-          account.activeNWC,
+          wallet,
         );
 
         if (success && event) {
@@ -209,6 +220,119 @@ const CustomZap: Component<{
       return;
     }
   };
+
+  // With NWC
+  // const submit = async () => {
+  //   if (!account?.hasPublicKey()) {
+  //     account?.actions.showGetStarted();
+  //     return;
+  //   }
+
+  //   if (!account.sec || account.sec.length === 0) {
+  //     const sec = readSecFromStorage();
+  //     if (sec) {
+  //       account.actions.setShowPin(sec);
+  //       return;
+  //     }
+  //   }
+
+  //   // if (!account.proxyThroughPrimal && account.relays.length === 0) {
+  //   //   toast?.sendWarning(
+  //   //     intl.formatMessage(toastText.noRelaysConnected),
+  //   //   );
+  //   //   return;
+  //   // }
+
+  //   props.onConfirm(selectedValue());
+
+  //   const note = props.note;
+
+  //   if (note) {
+  //     setTimeout(async () => {
+
+  //       const zappers: Record<string, Function> = {
+  //         [Kind.Text]: zapNote,
+  //         [Kind.LongForm]: zapArticle,
+  //         [Kind.LongFormShell]: zapArticle,
+  //       }
+
+  //       const success = await zappers[note.msg.kind](
+  //         note,
+  //         account.publicKey,
+  //         selectedValue().amount || 0,
+  //         selectedValue().message,
+  //         account.activeRelays,
+  //         account.activeNWC,
+  //       );
+
+  //       handleZap(success);
+  //     }, lottieDuration());
+  //     return;
+  //   }
+
+  //   if (props.profile) {
+  //     const success = await zapProfile(
+  //       props.profile,
+  //       account.publicKey,
+  //       selectedValue().amount || 0,
+  //       selectedValue().message,
+  //       account.activeRelays,
+  //       account.activeNWC,
+  //     );
+
+  //     handleZap(success);
+  //     return;
+  //   }
+
+  //   const dvm = props.dvm;
+  //   const dvmUser = dvm?.user;
+
+  //   if (dvm && dvmUser) {
+  //     setTimeout(async () => {
+
+  //       const success = await zapDVM(
+  //         dvm,
+  //         dvmUser,
+  //         account.publicKey,
+  //         selectedValue().amount || 0,
+  //         selectedValue().message,
+  //         account.activeRelays,
+  //         );
+
+  //         handleZap(success);
+  //       }, lottieDuration());
+  //     return;
+  //   }
+
+  //   if (props.stream && props.streamAuthor) {
+  //     const s = props.stream;
+  //     const a = props.streamAuthor;
+
+  //     setTimeout(async () => {
+  //       const { success, event } = await zapStream(
+  //         s,
+  //         a,
+  //         account.publicKey,
+  //         selectedValue().amount || 0,
+  //         selectedValue().message,
+  //         account.activeRelays,
+  //         account.activeNWC,
+  //       );
+
+  //       if (success && event) {
+  //         props.onSuccess(selectedValue(), event);
+  //         return;
+  //       }
+
+  //       toast?.sendWarning(
+  //         intl.formatMessage(toastZapFail),
+  //       );
+
+  //       props.onFail(selectedValue());
+  //     }, lottieDuration());
+  //     return;
+  //   }
+  // };
 
   const handleZap = (success = true) => {
     if (success) {

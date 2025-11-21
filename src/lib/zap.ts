@@ -9,6 +9,7 @@ import { decodeNWCUri } from "./wallet";
 import { hexToBytes, parseBolt11 } from "../utils";
 import { convertToUser } from "../stores/profile";
 import { StreamingData } from "./streaming";
+import { WalletContextValue } from '../contexts/WalletContext';
 
 export let lastZapError: string = "";
 
@@ -98,7 +99,7 @@ export const zapNote = async (
   amount: number,
   comment = '',
   relays: Relay[],
-  nwc?: string[],
+  wallet?: WalletContextValue, // ✅ Change from nwc to wallet
 ) => {
   if (!sender) {
     return false;
@@ -132,21 +133,44 @@ export const zapNote = async (
     const event = encodeURIComponent(JSON.stringify(signedEvent));
 
     const r2 = await (await fetch(`${callback}?amount=${sats}&nostr=${event}`)).json();
-    const pr = r2.pr;
+    const pr = r2.pr; // Lightning invoice
 
-    if (nwc && nwc[1] && nwc[1].length > 0) {
-      return await zapOverNWC(sender, nwc[1], pr);
+    // ✅ NEW: Pay with Breez SDK instead of NWC or WebLN
+    if (wallet) {
+      try {
+        const prepared = await wallet.prepareSendPayment({
+          paymentRequest: pr,
+          amount: BigInt(amount) // Amount in sats
+        });
+
+        await wallet.sendPayment({ prepareResponse: prepared });
+
+        return true;
+      } catch (paymentError) {
+        console.error('Breez payment failed:', paymentError);
+        return false;
+      }
     }
 
-    await enableWebLn();
-    await sendPayment(pr);
+    // ❌ REMOVE or keep as fallback (if you want to support external wallets)
+    // if (nwc && nwc[1] && nwc[1].length > 0) {
+    //   return await zapOverNWC(sender, nwc[1], pr);
+    // }
 
-    return true;
+    // ❌ REMOVE WebLN fallback (or keep if you want browser extension wallet support)
+    // await enableWebLn();
+    // await sendPayment(pr);
+
+    // If no wallet provided, fail
+    console.error('No wallet provided for zap');
+    return false;
+
   } catch (reason) {
     console.error('Failed to zap: ', reason);
     return false;
   }
 }
+
 
 export const zapArticle = async (
   note: PrimalArticle,
@@ -154,7 +178,7 @@ export const zapArticle = async (
   amount: number,
   comment = '',
   relays: Relay[],
-  nwc?: string[],
+  wallet?: WalletContextValue, // ✅ Change from nwc to wallet
 ) => {
   if (!sender) {
     return false;
@@ -194,21 +218,44 @@ export const zapArticle = async (
     const event = encodeURIComponent(JSON.stringify(signedEvent));
 
     const r2 = await (await fetch(`${callback}?amount=${sats}&nostr=${event}`)).json();
-    const pr = r2.pr;
+    const pr = r2.pr; // Lightning invoice
 
-    if (nwc && nwc[1] && nwc[1].length > 0) {
-      return await zapOverNWC(sender, nwc[1], pr);
+    // ✅ NEW: Pay with Breez SDK
+    if (wallet) {
+      try {
+        const prepared = await wallet.prepareSendPayment({
+          paymentRequest: pr,
+          amount: BigInt(amount) // Amount in sats
+        });
+
+        await wallet.sendPayment({ prepareResponse: prepared });
+
+        return true;
+      } catch (paymentError) {
+        console.error('Breez payment failed:', paymentError);
+        return false;
+      }
     }
 
-    await enableWebLn();
-    await sendPayment(pr);
+    // ❌ REMOVE NWC
+    // if (nwc && nwc[1] && nwc[1].length > 0) {
+    //   return await zapOverNWC(sender, nwc[1], pr);
+    // }
 
-    return true;
+    // ❌ REMOVE WebLN (or keep as fallback)
+    // await enableWebLn();
+    // await sendPayment(pr);
+
+    // If no wallet provided, fail
+    console.error('No wallet provided for zap');
+    return false;
+
   } catch (reason) {
-    console.error('Failed to zap: ', reason);
+    console.error('Failed to zap article: ', reason);
     return false;
   }
 }
+
 
 export const zapProfile = async (
   profile: PrimalUser,
@@ -216,7 +263,7 @@ export const zapProfile = async (
   amount: number,
   comment = '',
   relays: Relay[],
-  nwc?: string[],
+  wallet?: WalletContextValue, // ✅ Change from nwc to wallet
 ) => {
   if (!sender || !profile) {
     return false;
@@ -240,6 +287,7 @@ export const zapProfile = async (
     // @ts-ignore
     payload.comment = comment;
   }
+  
   const zapReq = nip57.makeZapRequest(payload);
 
   try {
@@ -248,21 +296,44 @@ export const zapProfile = async (
     const event = encodeURIComponent(JSON.stringify(signedEvent));
 
     const r2 = await (await fetch(`${callback}?amount=${sats}&nostr=${event}`)).json();
-    const pr = r2.pr;
+    const pr = r2.pr; // Lightning invoice
 
-    if (nwc && nwc[1] && nwc[1].length > 0) {
-      return await zapOverNWC(sender, nwc[1], pr);
+    // ✅ NEW: Pay with Breez SDK
+    if (wallet) {
+      try {
+        const prepared = await wallet.prepareSendPayment({
+          paymentRequest: pr,
+          amount: BigInt(amount) // Amount in sats
+        });
+
+        await wallet.sendPayment({ prepareResponse: prepared });
+
+        return true;
+      } catch (paymentError) {
+        console.error('Breez payment failed:', paymentError);
+        return false;
+      }
     }
 
-    await enableWebLn();
-    await sendPayment(pr);
+    // ❌ REMOVE NWC
+    // if (nwc && nwc[1] && nwc[1].length > 0) {
+    //   return await zapOverNWC(sender, nwc[1], pr);
+    // }
 
-    return true;
+    // ❌ REMOVE WebLN (or keep as fallback)
+    // await enableWebLn();
+    // await sendPayment(pr);
+
+    // If no wallet provided, fail
+    console.error('No wallet provided for zap');
+    return false;
+
   } catch (reason) {
-    console.error('Failed to zap: ', reason);
+    console.error('Failed to zap profile: ', reason);
     return false;
   }
 }
+
 
 export const zapSubscription = async (
   subEvent: NostrRelaySignedEvent,
@@ -270,7 +341,7 @@ export const zapSubscription = async (
   sender: string | undefined,
   relays: Relay[],
   exchangeRate?: Record<string, Record<string, number>>,
-  nwc?: string[],
+  wallet?: WalletContextValue, // ✅ Change from nwc to wallet
 ) => {
   if (!sender || !recipient) {
     return false;
@@ -282,7 +353,7 @@ export const zapSubscription = async (
     return false;
   }
 
-  const costTag = subEvent.tags.find(t => t [0] === 'amount');
+  const costTag = subEvent.tags.find(t => t[0] === 'amount');
   if (!costTag) return false;
 
   let sats = 0;
@@ -309,7 +380,7 @@ export const zapSubscription = async (
 
   if (subEvent.content.length > 0) {
     // @ts-ignore
-    payload.comment = comment;
+    payload.comment = subEvent.content; // ✅ Fixed: was using undefined 'comment' variable
   }
 
   const zapReq = nip57.makeZapRequest(payload);
@@ -320,18 +391,43 @@ export const zapSubscription = async (
     const event = encodeURIComponent(JSON.stringify(signedEvent));
 
     const r2 = await (await fetch(`${callback}?amount=${sats}&nostr=${event}`)).json();
-    const pr = r2.pr;
+    const pr = r2.pr; // Lightning invoice
 
-    if (nwc && nwc[1] && nwc[1].length > 0) {
-      return await zapOverNWC(sender, nwc[1], pr);
+    // ✅ NEW: Pay with Breez SDK
+    if (wallet) {
+      try {
+        // Convert msats to sats for Breez SDK
+        const amountSats = Math.ceil(sats / 1000);
+        
+        const prepared = await wallet.prepareSendPayment({
+          paymentRequest: pr,
+          amount: BigInt(amountSats) // Amount in sats
+        });
+
+        await wallet.sendPayment({ prepareResponse: prepared });
+
+        return true;
+      } catch (paymentError) {
+        console.error('Breez payment failed:', paymentError);
+        return false;
+      }
     }
 
-    await enableWebLn();
-    await sendPayment(pr);
+    // ❌ REMOVE NWC
+    // if (nwc && nwc[1] && nwc[1].length > 0) {
+    //   return await zapOverNWC(sender, nwc[1], pr);
+    // }
 
-    return true;
+    // ❌ REMOVE WebLN (or keep as fallback)
+    // await enableWebLn();
+    // await sendPayment(pr);
+
+    // If no wallet provided, fail
+    console.error('No wallet provided for zap');
+    return false;
+
   } catch (reason) {
-    console.error('Failed to zap: ', reason);
+    console.error('Failed to zap subscription: ', reason);
     return false;
   }
 }
@@ -343,7 +439,7 @@ export const zapDVM = async (
   amount: number,
   comment = '',
   relays: Relay[],
-  nwc?: string[],
+  wallet?: WalletContextValue, // ✅ Change from nwc to wallet
 ) => {
   if (!sender) {
     return false;
@@ -383,18 +479,40 @@ export const zapDVM = async (
     const event = encodeURIComponent(JSON.stringify(signedEvent));
 
     const r2 = await (await fetch(`${callback}?amount=${sats}&nostr=${event}`)).json();
-    const pr = r2.pr;
+    const pr = r2.pr; // Lightning invoice
 
-    if (nwc && nwc[1] && nwc[1].length > 0) {
-      return await zapOverNWC(sender, nwc[1], pr);
+    // ✅ NEW: Pay with Breez SDK
+    if (wallet) {
+      try {
+        const prepared = await wallet.prepareSendPayment({
+          paymentRequest: pr,
+          amount: BigInt(amount) // Amount in sats
+        });
+
+        await wallet.sendPayment({ prepareResponse: prepared });
+
+        return true;
+      } catch (paymentError) {
+        console.error('Breez payment failed:', paymentError);
+        return false;
+      }
     }
 
-    await enableWebLn();
-    await sendPayment(pr);
+    // ❌ REMOVE NWC
+    // if (nwc && nwc[1] && nwc[1].length > 0) {
+    //   return await zapOverNWC(sender, nwc[1], pr);
+    // }
 
-    return true;
+    // ❌ REMOVE WebLN (or keep as fallback)
+    // await enableWebLn();
+    // await sendPayment(pr);
+
+    // If no wallet provided, fail
+    console.error('No wallet provided for zap');
+    return false;
+
   } catch (reason) {
-    console.error('Failed to zap: ', reason);
+    console.error('Failed to zap DVM: ', reason);
     return false;
   }
 }
@@ -406,7 +524,7 @@ export const zapStream = async (
   amount: number,
   comment = '',
   relays: Relay[],
-  nwc?: string[],
+  wallet?: WalletContextValue, // ✅ Change from nwc to wallet
 ) => {
   if (!sender || !host) {
     return { success: false };
@@ -446,23 +564,46 @@ export const zapStream = async (
     const event = encodeURIComponent(JSON.stringify(signedEvent));
 
     const r2 = await (await fetch(`${callback}?amount=${sats}&nostr=${event}`)).json();
-    const pr = r2.pr;
+    const pr = r2.pr; // Lightning invoice
 
-    if (nwc && nwc[1] && nwc[1].length > 0) {
-      const success = await zapOverNWC(sender, nwc[1], pr);
+    // ✅ NEW: Pay with Breez SDK
+    if (wallet) {
+      try {
+        const prepared = await wallet.prepareSendPayment({
+          paymentRequest: pr,
+          amount: BigInt(amount) // Amount in sats
+        });
 
-      return { success: true, event: signedEvent }
+        await wallet.sendPayment({ prepareResponse: prepared });
+
+        return { success: true, event: signedEvent };
+      } catch (paymentError) {
+        console.error('Breez payment failed:', paymentError);
+        return { success: false };
+      }
     }
 
-    await enableWebLn();
-    await sendPayment(pr);
+    // ❌ REMOVE NWC
+    // if (nwc && nwc[1] && nwc[1].length > 0) {
+    //   const success = await zapOverNWC(sender, nwc[1], pr);
+    //   return { success: true, event: signedEvent }
+    // }
 
-    return { success: true, event: signEvent };
+    // ❌ REMOVE WebLN (or keep as fallback)
+    // await enableWebLn();
+    // await sendPayment(pr);
+    // return { success: true, event: signedEvent };
+
+    // If no wallet provided, fail
+    console.error('No wallet provided for zap');
+    return { success: false };
+
   } catch (reason) {
-    console.error('Failed to zap: ', reason);
-    return { sucess: false };
+    console.error('Failed to zap stream: ', reason);
+    return { success: false };
   }
-}
+};
+
 
 export const getZapEndpoint = async (user: PrimalUser): Promise<string | null>  => {
   try {

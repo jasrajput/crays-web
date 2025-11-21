@@ -49,6 +49,12 @@ const NavPhone: Component< { id?: string } > = (props) => {
       label: intl.formatMessage(t.downloads),
       icon: 'downloadIcon',
       bubble: () => notifications?.downloadsCount || 0,
+    },
+    {
+      type: 'link',
+      to: '/wallet',
+      label: intl.formatMessage(t.wallet),
+      icon: 'walletIcon',
     }, 
     {
       type: 'menu',
