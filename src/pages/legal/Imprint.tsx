@@ -5,10 +5,6 @@ import { A } from '@solidjs/router';
 
 const Imprint: Component = () => {
 
-    onMount(() => {
-        const container = document.querySelector('#root');
-        container && container.setAttribute('style', 'background-color: black');
-    })
 
     return (
         <div class={styles.imprint}>
