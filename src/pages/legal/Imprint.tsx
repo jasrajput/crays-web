@@ -62,6 +62,7 @@ const Imprint: Component = () => {
                         United Arab Emirates
                     </p>
                     <p>
+                        Name : Kai Thorben Biesenbach
                         E-Mail: info@crays.org
                     </p>
                 </section>
