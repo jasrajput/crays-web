@@ -1,0 +1,130 @@
+.imprint {
+    background-color: black;
+    color: #bfbfbf;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid #222;
+    }
+
+    .content {
+        max-width: 840px;
+        min-width: var(--center-col-w);
+        margin-inline: auto;
+        padding-inline: 20px;
+        padding-block: 40px;
+        font-size: 16px;
+        flex: 1;
+
+        section {
+            margin-inline: 0px;
+            margin-block: 12px;
+
+            section {
+                margin-inline: 24px 0px;
+                margin-block: 12px;
+
+                h3 {
+                    color: white;
+                    margin: 0;
+                    font-weight: 700;
+                    display: inline;
+                    font-size: 16px;
+
+                    &::after {
+                        content: " ";
+                    }
+                }
+            }
+        }
+
+        h1,
+        h2 {
+            color: white;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 26px;
+            margin-top: 32px;
+        }
+
+        p {
+            color: #bfbfbf;
+            font-size: 16px;
+            margin-inline: 0;
+            margin-block: 12px;
+            line-height: 1.5;
+        }
+
+        ul {
+            padding-left: 2rem;
+
+            li {
+                color: #bfbfbf;
+                font-size: 16px;
+                margin-inline: 0;
+                margin-block: 12px;
+            }
+        }
+    }
+
+    .footer {
+        border-top: 1px solid #222;
+        padding: 40px 20px;
+        text-align: center;
+        margin-top: auto;
+
+        .footerLinks {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+
+            a {
+                color: #888;
+                text-decoration: none;
+                font-size: 14px;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: white;
+                }
+            }
+        }
+
+        .copyright {
+            color: #555;
+            font-size: 12px;
+        }
+    }
+}
+
+@media only screen and (max-width: 720px) {
+    .imprint {
+        .content {
+            min-width: unset;
+            max-width: unset;
+            width: 100%;
+
+            section {
+                margin-inline: 0;
+
+                section {
+                    margin-inline: 0;
+                }
+            }
+        }
+    }
+}

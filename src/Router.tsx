@@ -60,6 +60,7 @@ const AdvancedSearch = lazy(() => import("./pages/AdvancedSearch"));
 const AdvancedSearchResults = lazy(
   () => import("./pages/AdvancedSearchResults")
 );
+const Imprint = lazy(() => import("./pages/legal/Imprint"));
 const ReadsEditor = lazy(() => import("./pages/ReadsEditor"));
 const ReadsMy = lazy(() => import("./pages/ReadsMy"));
 const Streaming = lazy(() => import("./pages/StreamPage"));
@@ -116,12 +117,12 @@ const AppRouter: Component = () => {
       nip19,
     };
 
-    primalWindow.onPrimalComponentMount = () => {};
-    primalWindow.onPrimalComponentCleanup = () => {};
-    primalWindow.onPrimalCacheServerConnected = () => {};
-    primalWindow.onPrimalUploadServerConnected = () => {};
-    primalWindow.onPrimalCacheServerMessageReceived = () => {};
-    primalWindow.onPrimalCacheServerMessageSent = () => {};
+    primalWindow.onPrimalComponentMount = () => { };
+    primalWindow.onPrimalComponentCleanup = () => { };
+    primalWindow.onPrimalCacheServerConnected = () => { };
+    primalWindow.onPrimalUploadServerConnected = () => { };
+    primalWindow.onPrimalCacheServerMessageReceived = () => { };
+    primalWindow.onPrimalCacheServerMessageSent = () => { };
   }
 
   return (
@@ -131,6 +132,7 @@ const AppRouter: Component = () => {
       <Route path="/csae-policy" component={Csae} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/support" component={Support} />
+      <Route path="/legal/imprint" component={Imprint} />
       <Route path="/" component={Layout}>
         <Route path="/" component={() => <Navigate href="/home" />} />
         <Route path="/home" component={Home} />
