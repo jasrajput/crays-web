@@ -1,5 +1,6 @@
 .feedsRestoreModal {
   width: 450px;
+  max-width: calc(100vw - 32px);
   color: var(--text-secondary);
   background-color: var(--background-input);
   border: 1px solid transparent;
@@ -28,9 +29,11 @@
   .feedConfirmationActions {
     display: flex;
     justify-content: space-between;
+    gap: 12px;
 
     >button {
       min-width: 178px;
+      flex: 1;
     }
 
     .feedRestoreConfirm {
@@ -42,7 +45,7 @@
       font-weight: 700;
       padding: 8px;
       margin: 0px;
-      max-width: 40%;
+      max-width: 50%;
     }
 
     .feedRestoreAbort {
@@ -52,20 +55,55 @@
       color: var(--text-secondary);
       background-color: var(--background-site);
       background: linear-gradient(var(--background-site),
-        var(--background-site)) padding-box,
+          var(--background-site)) padding-box,
         var(--brand-gradient) border-box;
       border: 1px solid transparent;
       border-radius: 6px;
       padding: 8px;
       margin: 0;
-      max-width: 40%;
+      max-width: 50%;
     }
   }
 
+  // Mobile responsive styles
+  @media (max-width: 640px) {
+    width: calc(100vw - 32px);
+    max-width: 100%;
+
+    .feedConfirmationTitle {
+      font-size: 16px;
+      line-height: 20px;
+      margin-bottom: 16px;
+    }
+
+    .feedConfirmationDescription {
+      font-size: 14px;
+      line-height: 18px;
+      margin-bottom: 16px;
+    }
+
+    .feedConfirmationActions {
+      flex-direction: column;
+      gap: 10px;
+
+      >button {
+        min-width: 100%;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .feedRestoreConfirm,
+      .feedRestoreAbort {
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+  }
 }
 
 .confirmAlternateModal {
   width: 480px;
+  max-width: calc(100vw - 32px);
   color: var(--text-secondary);
   background-color: var(--background-input);
   border: 1px solid transparent;
@@ -94,9 +132,10 @@
   .feedConfirmationActions {
     display: flex;
     justify-content: space-between;
+    gap: 12px;
 
     >button {
-      // min-width: 178px;
+      flex: 1;
     }
 
     .feedRestoreConfirm {
@@ -108,7 +147,7 @@
       font-weight: 700;
       padding: 8px;
       margin: 0px;
-      max-width: 40%;
+      max-width: 50%;
     }
 
     .feedRestoreAbort {
@@ -118,16 +157,50 @@
       color: var(--text-secondary);
       background-color: var(--background-site);
       background: linear-gradient(var(--background-site),
-        var(--background-site)) padding-box,
+          var(--background-site)) padding-box,
         var(--brand-gradient) border-box;
       border: 1px solid transparent;
       border-radius: 6px;
       padding: 8px;
       margin: 0;
-      max-width: 40%;
+      max-width: 50%;
     }
   }
 
+  // Mobile responsive styles
+  @media (max-width: 720px) {
+    width: calc(100vw - 32px);
+    max-width: 100%;
+
+    .feedConfirmationTitle {
+      font-size: 16px;
+      line-height: 20px;
+      margin-bottom: 16px;
+    }
+
+    .feedConfirmationDescription {
+      font-size: 14px;
+      line-height: 18px;
+      margin-bottom: 16px;
+    }
+
+    .feedConfirmationActions {
+      flex-direction: column;
+      gap: 10px;
+
+      >button {
+        min-width: 100%;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .feedRestoreConfirm,
+      .feedRestoreAbort {
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+  }
 }
 
 .hidden {
