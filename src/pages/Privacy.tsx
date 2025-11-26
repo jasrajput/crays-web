@@ -1,16 +1,20 @@
 import { Component, onMount } from 'solid-js';
 import styles from './Terms.module.scss';
-
+import Branding from '../components/Branding/Branding';
 
 const Privacy: Component = () => {
 
-  onMount(() => {
-    const container = document.querySelector('#root');
-    container && container.setAttribute('style', 'background-color: black');
-  })
+  // onMount(() => {
+  //   const container = document.querySelector('#root');
+  //   container && container.setAttribute('style', 'background-color: black');
+  // })
 
   return (
     <div class={styles.terms} >
+      <header class={styles.header}>
+        <Branding />
+      </header>
+
       <h1>
         Crays Privacy Policy
       </h1>
