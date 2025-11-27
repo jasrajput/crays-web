@@ -11,6 +11,9 @@ const Privacy: Component = () => {
     <div class={styles.terms}>
       <header class={styles.header}>
         <Branding />
+        <button class={styles.backButton} onClick={handleGoBack}>
+          ← Back
+        </button>
       </header>
 
       <div class={styles.content}>
@@ -131,12 +134,6 @@ const Privacy: Component = () => {
           </p>
         </section>
       </div>
-
-      <footer class={styles.footer}>
-        <button class={styles.backButton} onClick={handleGoBack}>
-          ← Back
-        </button>
-      </footer>
     </div>
   );
 }
