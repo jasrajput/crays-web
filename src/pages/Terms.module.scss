@@ -1,6 +1,6 @@
 .terms {
-  background-color: black;
-  color: #bfbfbf;
+  // background-color: #161718;
+  color: #161718;
   max-width: 840px;
   min-width: var(--center-col-w);
   margin-inline: auto;
@@ -8,56 +8,156 @@
   padding-inline: 20px;
   padding-block: 20px;
   font-size: 16px;
+  line-height: 1.7;
+
+  .header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  h1 {
+    color: #161718;
+    margin: 0;
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  h2 {
+    color: #161718;
+    margin: 0;
+    font-weight: 700;
+    font-size: 26px;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+  }
+
+  p {
+    color: #161718;
+    font-size: 16px;
+    margin-inline: 0;
+    margin-block: 1rem;
+    line-height: 1.7;
+  }
+
+  .lastUpdated {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 2rem;
+  }
+
+  .intro {
+    font-size: 16px;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
 
   section {
     margin-inline: 0px;
-    margin-block: 12px;
+    margin-block: 2rem;
+
+    h2 {
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      margin-block: 1rem;
+    }
+
     section {
       margin-inline: 24px 0px;
-      margin-block: 12px;
+      margin-block: 1.5rem;
+
       h3 {
-        color: white;
+        color: #161718;
         margin: 0;
         font-weight: 700;
         display: inline;
         font-size: 16px;
+        margin-bottom: 0.5rem;
 
         &::after {
           content: " ";
         }
       }
+
+      p {
+        margin-inline: 0;
+        margin-block: 1rem;
+        padding-left: 0.5rem;
+        line-height: 1.7;
+      }
     }
   }
 
-  h1, h2 {
-    color: white;
-    margin: 0;
-    font-weight: 700;
-  }
+  .subsection {
+    margin-bottom: 1.5rem;
 
-  h1 {
-    font-size: 28px;
-  }
+    h3 {
+      display: block !important;
+      margin-bottom: 0.75rem !important;
 
-  h2 {
-    font-size: 26px;
-  }
-
-  p {
-    color: #bfbfbf;
-    font-size: 16px;
-    margin-inline: 0;
-    margin-block: 12px;
+      &::after {
+        content: "" !important;
+      }
+    }
   }
 
   ul {
     padding-left: 2rem;
+    margin-block: 1rem;
+
     li {
-      color: #bfbfbf;
+      color: #161718;
       font-size: 16px;
       margin-inline: 0;
-      margin-block: 12px;
+      margin-block: 0.75rem;
+      line-height: 1.6;
     }
+  }
+
+  // .backButton {
+  //   display: inline-flex;
+  //   align-items: center;
+  //   gap: 0.25rem;
+  //   padding: 0.5rem 1rem;
+  //   background: transparent;
+  //   border: none;
+  //   border-radius: 4px;
+  //   cursor: pointer;
+  //   color: #161718;
+  //   font-size: 0.875rem;
+  //   transition: all 0.2s ease;
+  //   text-decoration: none;
+
+  //   &:hover {
+  //     // background: #161718;
+  //     border-color: #161718;
+  //     color: #161718;
+  //   }
+  // }
+  .backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #161718;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    margin-left: auto; // This pushes the button to the right
+    margin-right: 0; // Ensure no right margin
+    flex-direction: row-reverse;
   }
 }
 
@@ -66,12 +166,68 @@
     min-width: unset;
     max-width: unset;
     width: 100%;
+    padding-inline: 16px;
+    font-size: 15px;
+
+    .header {
+      flex-direction: row; // Keep it as row on mobile too
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 0.75rem;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 1.25rem;
+    }
+
+    p {
+      font-size: 15px;
+      margin-block: 0.875rem;
+    }
 
     section {
       margin-inline: 0;
+      margin-block: 1.5rem;
+
       section {
         margin-inline: 0;
+        margin-block: 1.25rem;
+
+        h3 {
+          font-size: 15px;
+          display: block;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          padding-left: 0;
+        }
       }
+    }
+
+    .subsection {
+      margin-bottom: 1.25rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+
+      li {
+        font-size: 15px;
+        margin-block: 0.5rem;
+      }
+    }
+
+    .backButton {
+      align-self: center;
+      margin-top: 0;
+      margin-left: auto; // Push to right on mobile too
     }
   }
 }
